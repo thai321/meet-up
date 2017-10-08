@@ -1,23 +1,43 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import Colors from '../../../constants/Colors';
 
-import { MeetupApi } from '../../../constants/api';
+import { connect } from 'react-redux';
+import { fetchMyMeetups } from './actions';
+
 import { LoadingScreen } from '../../commons';
-
 import { MyMeetupsList } from './components';
 
+import Colors from '../../../constants/Colors';
 import styles from './styles/HomeScreen';
 
-const meetupApi = new MeetupApi();
+import { Button, icon } from 'native-base';
 
+@connect(state => ({ myMeetups: state.home.myMeetups }), { fetchMyMeetups })
+
+//
 class HomeScreen extends React.Component {
-  static defaultProps = {
-    meetupApi
-  };
-
   static navigationOptions = {
+    // headerRight: () => {
+    //   const style = { backgroundColor: Colors.redColor };
+    //
+    //   const right = (
+    //     <View>
+    //       <Button transparent>
+    //         <Icon
+    //           name="md-add-circle"
+    //           style={{
+    //             fontSize: 30,
+    //             color: Colors.whiteColor
+    //           }}
+    //         />
+    //       </Button>
+    //     </View>
+    //   );
+    //
+    //   return { style, right };
+    // },
+
     headerStyle: {
       backgroundColor: Colors.redColor
     },
@@ -27,20 +47,14 @@ class HomeScreen extends React.Component {
     )
   };
 
-  state = {
-    loading: false,
-    meetups: []
-  };
-
   async componentDidMount() {
-    this.setState({ loading: true });
-    const meetups = await this.props.meetupApi.fetchGroupMeetups();
-    this.setState({ loading: false, meetups });
-    // setTimeout(() => this.setState({ loading: false, meetups }), 2000);
+    this.props.fetchMyMeetups();
   }
 
   render() {
-    if (this.state.loading) {
+    const { myMeetups: { isFetched, data, error } } = this.props;
+
+    if (!isFetched) {
       return <LoadingScreen />;
     }
 
@@ -51,7 +65,7 @@ class HomeScreen extends React.Component {
         </View>
 
         <View style={styles.bottomContainer}>
-          <MyMeetupsList meetups={this.state.meetups} />
+          <MyMeetupsList meetups={data} />
         </View>
       </View>
     );

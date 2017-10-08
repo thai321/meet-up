@@ -24,6 +24,9 @@ class MeetupApi {
 
     return data.meetups; //meetups from the model
   }
+  catch(e) {
+    console.log(e);
+  }
 }
 
 export { MeetupApi };

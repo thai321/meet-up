@@ -1,6 +1,9 @@
 import Expo, { AppLoading } from 'expo';
 
 import React from 'react';
+import { Provider } from 'react-redux';
+import store from './src/redux/store';
+
 import EStyleSheet from 'react-native-extended-stylesheet';
 import Colors from './constants/Colors';
 import { cachedFonts } from './helpers';
@@ -45,7 +48,11 @@ class App extends React.Component {
       return <AppLoading />;
     }
 
-    return <Root />;
+    return (
+      <Provider store={store}>
+        <Root />
+      </Provider>
+    );
   }
 }
 
